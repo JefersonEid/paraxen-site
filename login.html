@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar | PARÁXEN</title>
+  <meta name="description" content="Entre na sua conta Paráxen.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="PARÁXEN">
+        <span class="brand-title">PARÁXEN</span>
+        <span class="brand-subtitle">App oficial do mangá</span>
+      </a>
+      <nav class="auth-nav" aria-label="Conta">
+        <a class="nav-button" href="cadastro.html">Criar conta</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth-screen" aria-labelledby="login-title">
+      <div class="auth-panel">
+        <p class="eyebrow">Acesso Paráxen</p>
+        <h1 id="login-title">Entrar</h1>
+
+        <button class="google-button" type="button" data-google-login>Continuar com Google</button>
+
+        <div class="auth-divider"><span>ou</span></div>
+
+        <form class="auth-form" data-login-form>
+          <label for="login-email">E-mail</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required>
+
+          <label for="login-senha">Senha</label>
+          <input id="login-senha" name="senha" type="password" autocomplete="current-password" required>
+
+          <button class="download-button auth-submit" type="submit">Entrar com e-mail</button>
+        </form>
+
+        <form class="reset-form" data-reset-form>
+          <label for="reset-email">Recuperar senha</label>
+          <div class="inline-form">
+            <input id="reset-email" name="email" type="email" autocomplete="email" placeholder="seu@email.com">
+            <button class="secondary-button" type="submit">Enviar link</button>
+          </div>
+        </form>
+
+        <p class="auth-message" data-auth-message aria-live="polite"></p>
+        <p class="auth-link">Ainda não tem conta? <a href="cadastro.html">Criar conta</a></p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>

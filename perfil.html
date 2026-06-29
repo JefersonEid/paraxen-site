@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil | PARÁXEN</title>
+  <meta name="description" content="Perfil da conta Paráxen.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="PARÁXEN">
+        <span class="brand-title">PARÁXEN</span>
+        <span class="brand-subtitle">App oficial do mangá</span>
+      </a>
+      <nav class="auth-nav" aria-label="Conta">
+        <a class="nav-button" href="index.html">Início</a>
+        <button class="nav-button" type="button" data-profile-logout>Sair</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth-screen profile-screen" aria-labelledby="perfil-title">
+      <div class="auth-panel profile-panel">
+        <p class="eyebrow">Conta Paráxen</p>
+        <h1 id="perfil-title">Meu Perfil</h1>
+
+        <img class="profile-photo" src="" alt="Foto do usuário" data-profile-photo>
+
+        <form class="auth-form profile-form" data-profile-form>
+          <label for="perfil-nome">Nome</label>
+          <input id="perfil-nome" name="nome" type="text" disabled>
+
+          <label for="perfil-email">E-mail</label>
+          <input id="perfil-email" name="email" type="email" disabled>
+        </form>
+
+        <div class="profile-actions">
+          <button class="download-button" type="button" data-edit-profile>Editar perfil</button>
+          <button class="secondary-button" type="button" data-profile-logout>Sair</button>
+        </div>
+
+        <p class="auth-message" data-profile-message aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="perfil.js"></script>
+</body>
+</html>

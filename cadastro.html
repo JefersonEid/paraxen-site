@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta | PARÁXEN</title>
+  <meta name="description" content="Crie sua conta Paráxen.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="PARÁXEN">
+        <span class="brand-title">PARÁXEN</span>
+        <span class="brand-subtitle">App oficial do mangá</span>
+      </a>
+      <nav class="auth-nav" aria-label="Conta">
+        <a class="nav-button" href="login.html">Entrar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth-screen" aria-labelledby="cadastro-title">
+      <div class="auth-panel">
+        <p class="eyebrow">Nova conta</p>
+        <h1 id="cadastro-title">Criar conta</h1>
+
+        <button class="google-button" type="button" data-google-login>Continuar com Google</button>
+
+        <div class="auth-divider"><span>ou</span></div>
+
+        <form class="auth-form" data-cadastro-form>
+          <label for="cadastro-nome">Nome</label>
+          <input id="cadastro-nome" name="nome" type="text" autocomplete="name" required>
+
+          <label for="cadastro-email">E-mail</label>
+          <input id="cadastro-email" name="email" type="email" autocomplete="email" required>
+
+          <label for="cadastro-senha">Senha</label>
+          <input id="cadastro-senha" name="senha" type="password" autocomplete="new-password" minlength="6" required>
+
+          <label for="cadastro-confirmar">Confirmar senha</label>
+          <input id="cadastro-confirmar" name="confirmarSenha" type="password" autocomplete="new-password" minlength="6" required>
+
+          <button class="download-button auth-submit" type="submit">Criar conta</button>
+        </form>
+
+        <p class="auth-message" data-auth-message aria-live="polite"></p>
+        <p class="auth-link">Já tem conta? <a href="login.html">Entrar</a></p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>

@@ -9,10 +9,23 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="PARÁXEN">
-      <span class="brand-title">PARÁXEN</span>
-      <span class="brand-subtitle">App oficial do mangá</span>
-    </a>
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="PARÁXEN">
+        <span class="brand-title">PARÁXEN</span>
+        <span class="brand-subtitle">App oficial do mangá</span>
+      </a>
+      <nav class="auth-nav" aria-label="Conta">
+        <div class="auth-nav-group" data-auth-guest>
+          <a class="nav-button" href="login.html">Entrar</a>
+          <a class="nav-button nav-button-primary" href="cadastro.html">Criar conta</a>
+        </div>
+        <div class="auth-nav-group" data-auth-user hidden>
+          <img class="nav-avatar" src="" alt="Foto do usuário" data-auth-photo>
+          <a class="nav-button nav-button-primary" href="perfil.html">Meu Perfil</a>
+          <button class="nav-button" type="button" data-logout>Sair</button>
+        </div>
+      </nav>
+    </div>
   </header>
 
   <main id="top">
@@ -100,27 +113,6 @@
     <p>© 2026 Paráxen</p>
   </footer>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBPu-87T6jjKMKHdJJ_Av-r_Bsai8g75K8",
-      authDomain: "paraxen-8d0a4.firebaseapp.com",
-      projectId: "paraxen-8d0a4",
-      storageBucket: "paraxen-8d0a4.firebasestorage.app",
-      messagingSenderId: "276585729333",
-      appId: "1:276585729333:web:905c4c2230f53ed9fe107c",
-      measurementId: "G-8KEMS61VWZ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-
-    isSupported().then((supported) => {
-      if (supported) {
-        getAnalytics(app);
-      }
-    });
-  </script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>
