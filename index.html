@@ -99,5 +99,28 @@
   <footer class="site-footer">
     <p>© 2026 Paráxen</p>
   </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPu-87T6jjKMKHdJJ_Av-r_Bsai8g75K8",
+      authDomain: "paraxen-8d0a4.firebaseapp.com",
+      projectId: "paraxen-8d0a4",
+      storageBucket: "paraxen-8d0a4.firebasestorage.app",
+      messagingSenderId: "276585729333",
+      appId: "1:276585729333:web:905c4c2230f53ed9fe107c",
+      measurementId: "G-8KEMS61VWZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    isSupported().then((supported) => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    });
+  </script>
 </body>
 </html>
