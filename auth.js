@@ -4,6 +4,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
@@ -18,10 +19,34 @@ import { auth, db, googleProvider } from "./firebase-config.js";
 const defaultAvatar =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%23040b12'/%3E%3Ccircle cx='80' cy='58' r='30' fill='%2319e6ff' fill-opacity='.9'/%3E%3Cpath d='M30 142c8-31 28-47 50-47s42 16 50 47' fill='%23246dff' fill-opacity='.8'/%3E%3C/svg%3E";
 
+let authActionInProgress = false;
+
 function setMessage(target, message, type = "info") {
   if (!target) return;
   target.textContent = message;
   target.dataset.type = type;
+}
+
+function setLoading(form, isLoading) {
+  if (!form) return;
+  form.querySelectorAll("input, button").forEach((field) => {
+    field.disabled = isLoading;
+  });
+}
+
+function setButtonLoading(button, isLoading, loadingText) {
+  if (!button) return;
+
+  if (!button.dataset.defaultText) {
+    button.dataset.defaultText = button.textContent;
+  }
+
+  button.disabled = isLoading;
+  button.textContent = isLoading ? loadingText : button.dataset.defaultText;
+}
+
+function irParaPerfil() {
+  window.location.href = "perfil.html";
 }
 
 function getProvider(user) {
@@ -52,24 +77,59 @@ async function saveUserProfile(user, nome, isNewUser = false) {
 }
 
 export async function entrarComGoogle() {
-  const result = await signInWithPopup(auth, googleProvider);
-  await saveUserProfile(result.user, result.user.displayName, Boolean(result._tokenResponse?.isNewUser));
-  window.location.href = "perfil.html";
+  authActionInProgress = true;
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    try {
+      await saveUserProfile(result.user, result.user.displayName, Boolean(result._tokenResponse?.isNewUser));
+    } catch (error) {
+      console.warn("Conta autenticada, mas o perfil não foi salvo no Firestore.", error);
+    }
+    irParaPerfil();
+  } catch (error) {
+    const code = error?.code || "";
+    if (code.includes("popup-blocked") || code.includes("operation-not-supported-in-this-environment")) {
+      await signInWithRedirect(auth, googleProvider);
+      return;
+    }
+    authActionInProgress = false;
+    throw error;
+  }
 }
 
 export async function cadastrarComEmail(nome, email, senha) {
-  const credential = await createUserWithEmailAndPassword(auth, email, senha);
-  await updateProfile(credential.user, {
-    displayName: nome
-  });
-  await saveUserProfile(credential.user, nome, true);
-  window.location.href = "perfil.html";
+  try {
+    authActionInProgress = true;
+    const credential = await createUserWithEmailAndPassword(auth, email, senha);
+    await updateProfile(credential.user, {
+      displayName: nome
+    });
+    try {
+      await saveUserProfile(credential.user, nome, true);
+    } catch (error) {
+      console.warn("Conta criada, mas o perfil não foi salvo no Firestore.", error);
+    }
+    irParaPerfil();
+  } catch (error) {
+    authActionInProgress = false;
+    throw error;
+  }
 }
 
 export async function entrarComEmail(email, senha) {
-  const credential = await signInWithEmailAndPassword(auth, email, senha);
-  await saveUserProfile(credential.user, credential.user.displayName);
-  window.location.href = "perfil.html";
+  try {
+    authActionInProgress = true;
+    const credential = await signInWithEmailAndPassword(auth, email, senha);
+    try {
+      await saveUserProfile(credential.user, credential.user.displayName);
+    } catch (error) {
+      console.warn("Login concluído, mas o perfil não foi salvo no Firestore.", error);
+    }
+    irParaPerfil();
+  } catch (error) {
+    authActionInProgress = false;
+    throw error;
+  }
 }
 
 export async function recuperarSenha(email) {
@@ -141,6 +201,17 @@ function initHeaderAuth() {
   });
 }
 
+function initAuthPageRedirect() {
+  const isAuthPage = document.querySelector("[data-login-form], [data-cadastro-form]");
+  if (!isAuthPage) return;
+
+  observarUsuario((user) => {
+    if (user && !authActionInProgress) {
+      irParaPerfil();
+    }
+  });
+}
+
 function initLoginPage() {
   const loginForm = document.querySelector("[data-login-form]");
   const resetForm = document.querySelector("[data-reset-form]");
@@ -150,11 +221,12 @@ function initLoginPage() {
   googleButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       try {
-        button.disabled = true;
+        setMessage(message, "Abrindo login do Google...", "info");
+        setButtonLoading(button, true, "Abrindo Google...");
         await entrarComGoogle();
       } catch (error) {
         setMessage(message, traduzirErro(error), "error");
-        button.disabled = false;
+        setButtonLoading(button, false);
       }
     });
   });
@@ -165,9 +237,11 @@ function initLoginPage() {
 
     try {
       setMessage(message, "Entrando...", "info");
+      setLoading(loginForm, true);
       await entrarComEmail(form.get("email").trim(), form.get("senha"));
     } catch (error) {
       setMessage(message, traduzirErro(error), "error");
+      setLoading(loginForm, false);
     }
   });
 
@@ -182,10 +256,13 @@ function initLoginPage() {
     }
 
     try {
+      setLoading(resetForm, true);
       await recuperarSenha(email);
       setMessage(message, "Enviamos um link de recuperação para seu e-mail.", "success");
     } catch (error) {
       setMessage(message, traduzirErro(error), "error");
+    } finally {
+      setLoading(resetForm, false);
     }
   });
 }
@@ -198,11 +275,12 @@ function initCadastroPage() {
   googleButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       try {
-        button.disabled = true;
+        setMessage(message, "Abrindo login do Google...", "info");
+        setButtonLoading(button, true, "Abrindo Google...");
         await entrarComGoogle();
       } catch (error) {
         setMessage(message, traduzirErro(error), "error");
-        button.disabled = false;
+        setButtonLoading(button, false);
       }
     });
   });
@@ -222,13 +300,29 @@ function initCadastroPage() {
 
     try {
       setMessage(message, "Criando sua conta...", "info");
+      setLoading(cadastroForm, true);
       await cadastrarComEmail(nome, email, senha);
     } catch (error) {
       setMessage(message, traduzirErro(error), "error");
+      setLoading(cadastroForm, false);
     }
   });
 }
 
+function initAuthScreenClose() {
+  document.querySelectorAll(".auth-screen").forEach((screen) => {
+    if (screen.classList.contains("profile-screen")) return;
+
+    screen.addEventListener("click", (event) => {
+      if (event.target === screen) {
+        window.location.href = "index.html";
+      }
+    });
+  });
+}
+
 initHeaderAuth();
+initAuthScreenClose();
+initAuthPageRedirect();
 initLoginPage();
 initCadastroPage();
