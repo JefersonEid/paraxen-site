@@ -20,6 +20,7 @@ const defaultAvatar =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%23040b12'/%3E%3Ccircle cx='80' cy='58' r='30' fill='%2319e6ff' fill-opacity='.9'/%3E%3Cpath d='M30 142c8-31 28-47 50-47s42 16 50 47' fill='%23246dff' fill-opacity='.8'/%3E%3C/svg%3E";
 
 let authActionInProgress = false;
+const authTimeoutMs = 15000;
 
 function setMessage(target, message, type = "info") {
   if (!target) return;
@@ -47,6 +48,25 @@ function setButtonLoading(button, isLoading, loadingText) {
 
 function irParaHome() {
   window.location.href = "index.html";
+}
+
+function criarErroTimeout() {
+  const error = new Error("Tempo esgotado ao conectar com o Firebase.");
+  error.code = "auth/request-timeout";
+  return error;
+}
+
+function comTimeout(promise) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(() => {
+      reject(criarErroTimeout());
+    }, authTimeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => {
+    window.clearTimeout(timeoutId);
+  });
 }
 
 function bloquearGoogleEmArquivoLocal() {
@@ -88,7 +108,7 @@ export async function entrarComGoogle() {
   bloquearGoogleEmArquivoLocal();
   authActionInProgress = true;
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const result = await comTimeout(signInWithPopup(auth, googleProvider));
     try {
       await saveUserProfile(result.user, result.user.displayName, Boolean(result._tokenResponse?.isNewUser));
     } catch (error) {
@@ -98,7 +118,7 @@ export async function entrarComGoogle() {
   } catch (error) {
     const code = error?.code || "";
     if (code.includes("popup-blocked") || code.includes("operation-not-supported-in-this-environment")) {
-      await signInWithRedirect(auth, googleProvider);
+      await comTimeout(signInWithRedirect(auth, googleProvider));
       return;
     }
     authActionInProgress = false;
@@ -109,10 +129,10 @@ export async function entrarComGoogle() {
 export async function cadastrarComEmail(nome, email, senha) {
   try {
     authActionInProgress = true;
-    const credential = await createUserWithEmailAndPassword(auth, email, senha);
-    await updateProfile(credential.user, {
+    const credential = await comTimeout(createUserWithEmailAndPassword(auth, email, senha));
+    await comTimeout(updateProfile(credential.user, {
       displayName: nome
-    });
+    }));
     try {
       await saveUserProfile(credential.user, nome, true);
     } catch (error) {
@@ -127,7 +147,7 @@ export async function cadastrarComEmail(nome, email, senha) {
 export async function entrarComEmail(email, senha) {
   try {
     authActionInProgress = true;
-    const credential = await signInWithEmailAndPassword(auth, email, senha);
+    const credential = await comTimeout(signInWithEmailAndPassword(auth, email, senha));
     try {
       await saveUserProfile(credential.user, credential.user.displayName);
     } catch (error) {
@@ -141,7 +161,7 @@ export async function entrarComEmail(email, senha) {
 }
 
 export async function recuperarSenha(email) {
-  await sendPasswordResetEmail(auth, email);
+  await comTimeout(sendPasswordResetEmail(auth, email));
 }
 
 export async function sair() {
@@ -208,6 +228,9 @@ function traduzirErro(error) {
   if (code.includes("popup-closed-by-user")) return "Login com Google cancelado.";
   if (code.includes("popup-blocked")) return "O navegador bloqueou a janela do Google.";
   if (code.includes("network-request-failed")) return "Falha de conexão com o Firebase.";
+  if (code.includes("request-timeout")) {
+    return "A conexão demorou demais. Verifique a internet, desative bloqueadores e tente novamente.";
+  }
   if (code.includes("too-many-requests")) return "Muitas tentativas. Tente novamente mais tarde.";
 
   return "Não foi possível concluir a ação. Tente novamente.";
