@@ -49,6 +49,14 @@ function irParaPerfil() {
   window.location.href = "perfil.html";
 }
 
+function bloquearGoogleEmArquivoLocal() {
+  if (window.location.protocol !== "file:") return;
+
+  const error = new Error("Google Auth não suporta páginas abertas por file://.");
+  error.code = "auth/file-protocol";
+  throw error;
+}
+
 function getProvider(user) {
   return user.providerData[0]?.providerId || "password";
 }
@@ -77,6 +85,7 @@ async function saveUserProfile(user, nome, isNewUser = false) {
 }
 
 export async function entrarComGoogle() {
+  bloquearGoogleEmArquivoLocal();
   authActionInProgress = true;
   try {
     const result = await signInWithPopup(auth, googleProvider);
@@ -185,7 +194,21 @@ function traduzirErro(error) {
   if (code.includes("user-not-found") || code.includes("wrong-password") || code.includes("invalid-credential")) {
     return "E-mail ou senha inválidos.";
   }
+  if (code.includes("file-protocol")) {
+    return "Login com Google não funciona abrindo o arquivo direto. Use o site publicado ou um servidor local.";
+  }
+  if (code.includes("unauthorized-domain")) {
+    return "Domínio não autorizado no Firebase para login com Google.";
+  }
+  if (code.includes("operation-not-allowed")) {
+    return "Login com Google não está habilitado no Firebase.";
+  }
+  if (code.includes("invalid-auth-event")) {
+    return "Login com Google não está configurado corretamente no Firebase.";
+  }
   if (code.includes("popup-closed-by-user")) return "Login com Google cancelado.";
+  if (code.includes("popup-blocked")) return "O navegador bloqueou a janela do Google.";
+  if (code.includes("network-request-failed")) return "Falha de conexão com o Firebase.";
   if (code.includes("too-many-requests")) return "Muitas tentativas. Tente novamente mais tarde.";
 
   return "Não foi possível concluir a ação. Tente novamente.";

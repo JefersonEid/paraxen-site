@@ -46,7 +46,13 @@ observarUsuario(async (user) => {
     return;
   }
 
-  const firestoreProfile = await loadFirestoreProfile(user);
+  let firestoreProfile = {};
+  try {
+    firestoreProfile = await loadFirestoreProfile(user);
+  } catch (error) {
+    console.warn("Não foi possível carregar o perfil no Firestore.", error);
+  }
+
   const nome = firestoreProfile.nome || user.displayName || "Usuário Paráxen";
   const foto = firestoreProfile.foto || user.photoURL || defaultAvatar;
 
