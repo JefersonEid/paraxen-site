@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entrar | PARÁXEN</title>
   <meta name="description" content="Entre na sua conta Paráxen.">
-  <link rel="stylesheet" href="style.css?v=20260630-email-check">
+  <link rel="stylesheet" href="style.css?v=20260630-form-submit-fix">
 </head>
 <body>
   <header class="site-header">
@@ -31,7 +31,7 @@
 
         <div class="auth-divider"><span>ou</span></div>
 
-        <form class="auth-form" data-login-form>
+        <form class="auth-form" action="javascript:void(0)" data-login-form>
           <label for="login-email">E-mail</label>
           <input id="login-email" name="email" type="email" autocomplete="email" required>
 
@@ -41,7 +41,7 @@
           <button class="download-button auth-submit" type="submit">Entrar com e-mail</button>
         </form>
 
-        <form class="reset-form" data-reset-form>
+        <form class="reset-form" action="javascript:void(0)" data-reset-form>
           <label for="reset-email">Recuperar senha</label>
           <div class="inline-form">
             <input id="reset-email" name="email" type="email" autocomplete="email" placeholder="seu@email.com">
@@ -55,6 +55,6 @@
     </section>
   </main>
 
-  <script type="module" src="auth.js?v=20260630-email-check"></script>
+  <script type="module" src="auth.js?v=20260630-form-submit-fix"></script>
 </body>
 </html>
