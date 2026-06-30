@@ -1,6 +1,5 @@
 import {
   createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -85,16 +84,6 @@ async function saveUserProfile(user, nome, isNewUser = false) {
   await setDoc(userRef, baseData, { merge: true });
 }
 
-async function validarEmailDisponivel(email) {
-  const methods = await fetchSignInMethodsForEmail(auth, email);
-
-  if (methods.length > 0) {
-    const error = new Error("E-mail já cadastrado.");
-    error.code = "auth/email-already-in-use";
-    throw error;
-  }
-}
-
 export async function entrarComGoogle() {
   bloquearGoogleEmArquivoLocal();
   authActionInProgress = true;
@@ -120,7 +109,6 @@ export async function entrarComGoogle() {
 export async function cadastrarComEmail(nome, email, senha) {
   try {
     authActionInProgress = true;
-    await validarEmailDisponivel(email);
     const credential = await createUserWithEmailAndPassword(auth, email, senha);
     await updateProfile(credential.user, {
       displayName: nome
