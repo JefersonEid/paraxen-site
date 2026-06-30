@@ -131,6 +131,20 @@ input:disabled {
   color: #001015;
 }
 
+.nav-user-name {
+  min-height: 42px;
+  display: inline-flex;
+  max-width: 220px;
+  padding: 0 12px;
+  align-items: center;
+  color: var(--cyan);
+  font-size: 0.94rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .nav-avatar {
   width: 42px;
   height: 42px;
@@ -682,7 +696,7 @@ h2 {
   }
 
   .auth-nav-group[data-auth-user] {
-    grid-template-columns: auto 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .inline-form,

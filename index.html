@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PARÁXEN | App oficial do mangá</title>
   <meta name="description" content="Baixe o app oficial do mangá Paráxen para ler capítulos, conhecer personagens e acompanhar novidades.">
-  <link rel="stylesheet" href="style.css?v=20260630-google-fix">
+  <link rel="stylesheet" href="style.css?v=20260630-home-auth">
 </head>
 <body>
   <header class="site-header">
@@ -20,8 +20,7 @@
           <a class="nav-button nav-button-primary" href="cadastro.html">Criar conta</a>
         </div>
         <div class="auth-nav-group" data-auth-user hidden>
-          <img class="nav-avatar" src="" alt="Foto do usuário" data-auth-photo>
-          <a class="nav-button nav-button-primary" href="perfil.html">Meu Perfil</a>
+          <span class="nav-user-name" data-auth-name></span>
           <button class="nav-button" type="button" data-logout>Sair</button>
         </div>
       </nav>
@@ -113,6 +112,6 @@
     <p>© 2026 Paráxen</p>
   </footer>
 
-  <script type="module" src="auth.js?v=20260630-google-fix"></script>
+  <script type="module" src="auth.js?v=20260630-home-auth"></script>
 </body>
 </html>

@@ -45,8 +45,8 @@ function setButtonLoading(button, isLoading, loadingText) {
   button.textContent = isLoading ? loadingText : button.dataset.defaultText;
 }
 
-function irParaPerfil() {
-  window.location.href = "perfil.html";
+function irParaHome() {
+  window.location.href = "index.html";
 }
 
 function bloquearGoogleEmArquivoLocal() {
@@ -94,7 +94,7 @@ export async function entrarComGoogle() {
     } catch (error) {
       console.warn("Conta autenticada, mas o perfil não foi salvo no Firestore.", error);
     }
-    irParaPerfil();
+    irParaHome();
   } catch (error) {
     const code = error?.code || "";
     if (code.includes("popup-blocked") || code.includes("operation-not-supported-in-this-environment")) {
@@ -118,7 +118,6 @@ export async function cadastrarComEmail(nome, email, senha) {
     } catch (error) {
       console.warn("Conta criada, mas o perfil não foi salvo no Firestore.", error);
     }
-    irParaPerfil();
   } catch (error) {
     authActionInProgress = false;
     throw error;
@@ -134,7 +133,7 @@ export async function entrarComEmail(email, senha) {
     } catch (error) {
       console.warn("Login concluído, mas o perfil não foi salvo no Firestore.", error);
     }
-    irParaPerfil();
+    irParaHome();
   } catch (error) {
     authActionInProgress = false;
     throw error;
@@ -172,7 +171,7 @@ export function renderAuthState(user) {
   if (!user) return;
 
   nameEls.forEach((el) => {
-    el.textContent = user.displayName || "Meu Perfil";
+    el.textContent = user.displayName || user.email || "Usuário";
   });
 
   emailEls.forEach((el) => {
@@ -230,7 +229,7 @@ function initAuthPageRedirect() {
 
   observarUsuario((user) => {
     if (user && !authActionInProgress) {
-      irParaPerfil();
+      irParaHome();
     }
   });
 }
@@ -325,6 +324,8 @@ function initCadastroPage() {
       setMessage(message, "Criando sua conta...", "info");
       setLoading(cadastroForm, true);
       await cadastrarComEmail(nome, email, senha);
+      setMessage(message, "Cadastro efetuado com sucesso.", "success");
+      window.setTimeout(irParaHome, 1200);
     } catch (error) {
       setMessage(message, traduzirErro(error), "error");
       setLoading(cadastroForm, false);
