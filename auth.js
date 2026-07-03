@@ -1,5 +1,6 @@
 import {
   createUserWithEmailAndPassword,
+  getRedirectResult,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -20,6 +21,7 @@ const defaultAvatar =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%23040b12'/%3E%3Ccircle cx='80' cy='58' r='30' fill='%2319e6ff' fill-opacity='.9'/%3E%3Cpath d='M30 142c8-31 28-47 50-47s42 16 50 47' fill='%23246dff' fill-opacity='.8'/%3E%3C/svg%3E";
 
 let authActionInProgress = false;
+let redirectCheckInProgress = false;
 const authTimeoutMs = 15000;
 
 function setMessage(target, message, type = "info") {
@@ -77,6 +79,11 @@ function bloquearGoogleEmArquivoLocal() {
   throw error;
 }
 
+function getAuthActionUrl() {
+  if (window.location.protocol === "file:") return undefined;
+  return new URL("login.html", window.location.href).href;
+}
+
 function getProvider(user) {
   return user.providerData[0]?.providerId || "password";
 }
@@ -126,6 +133,36 @@ export async function entrarComGoogle() {
   }
 }
 
+async function processarRetornoGoogle() {
+  redirectCheckInProgress = true;
+
+  try {
+    const result = await comTimeout(getRedirectResult(auth));
+    if (!result) return;
+
+    authActionInProgress = true;
+
+    try {
+      await saveUserProfile(result.user, result.user.displayName, Boolean(result._tokenResponse?.isNewUser));
+    } catch (error) {
+      console.warn("Conta autenticada, mas o perfil não foi salvo no Firestore.", error);
+    }
+
+    irParaHome();
+  } catch (error) {
+    if (error?.code !== "auth/no-auth-event") {
+      const message = document.querySelector("[data-auth-message]");
+      setMessage(message, traduzirErro(error), "error");
+    }
+  } finally {
+    redirectCheckInProgress = false;
+
+    if (!authActionInProgress && auth.currentUser && document.querySelector("[data-login-form], [data-cadastro-form]")) {
+      irParaHome();
+    }
+  }
+}
+
 export async function cadastrarComEmail(nome, email, senha) {
   try {
     authActionInProgress = true;
@@ -161,7 +198,9 @@ export async function entrarComEmail(email, senha) {
 }
 
 export async function recuperarSenha(email) {
-  await comTimeout(sendPasswordResetEmail(auth, email));
+  const actionUrl = getAuthActionUrl();
+  const actionCodeSettings = actionUrl ? { url: actionUrl, handleCodeInApp: false } : undefined;
+  await comTimeout(sendPasswordResetEmail(auth, email, actionCodeSettings));
 }
 
 export async function sair() {
@@ -252,7 +291,11 @@ function initAuthPageRedirect() {
 
   observarUsuario((user) => {
     if (user && !authActionInProgress) {
-      irParaHome();
+      window.setTimeout(() => {
+        if (!authActionInProgress && !redirectCheckInProgress) {
+          irParaHome();
+        }
+      }, 0);
     }
   });
 }
@@ -303,7 +346,7 @@ function initLoginPage() {
     try {
       setLoading(resetForm, true);
       await recuperarSenha(email);
-      setMessage(message, "Enviamos um link de recuperação para seu e-mail.", "success");
+      setMessage(message, "Se este e-mail estiver cadastrado, o Firebase enviará um link de recuperação.", "success");
     } catch (error) {
       setMessage(message, traduzirErro(error), "error");
     } finally {
@@ -368,6 +411,7 @@ function initAuthScreenClose() {
   });
 }
 
+processarRetornoGoogle();
 initHeaderAuth();
 initAuthScreenClose();
 initAuthPageRedirect();
