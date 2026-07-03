@@ -309,6 +309,8 @@ function initAuthPageRedirect() {
 function initLoginPage() {
   const loginForm = document.querySelector("[data-login-form]");
   const resetForm = document.querySelector("[data-reset-form]");
+  if (!loginForm && !resetForm) return;
+
   const googleButtons = document.querySelectorAll("[data-google-login]");
   const message = document.querySelector("[data-auth-message]");
 
@@ -363,6 +365,8 @@ function initLoginPage() {
 
 function initCadastroPage() {
   const cadastroForm = document.querySelector("[data-cadastro-form]");
+  if (!cadastroForm) return;
+
   const googleButtons = document.querySelectorAll("[data-google-login]");
   const message = document.querySelector("[data-auth-message]");
 
