@@ -247,6 +247,12 @@ function traduzirErro(error) {
   const code = error?.code || "";
 
   if (code.includes("email-already-in-use")) return "Este e-mail já está cadastrado.";
+  if (code.includes("account-exists-with-different-credential")) {
+    return "Este e-mail já foi cadastrado com outro método. Entre com e-mail e senha.";
+  }
+  if (code.includes("credential-already-in-use")) {
+    return "Esta conta Google já está vinculada a outro cadastro.";
+  }
   if (code.includes("invalid-email")) return "Informe um e-mail válido.";
   if (code.includes("weak-password")) return "A senha precisa ter pelo menos 6 caracteres.";
   if (code.includes("user-not-found") || code.includes("wrong-password") || code.includes("invalid-credential")) {
@@ -290,9 +296,9 @@ function initAuthPageRedirect() {
   if (!isAuthPage) return;
 
   observarUsuario((user) => {
-    if (user && !authActionInProgress) {
+    if (user) {
       window.setTimeout(() => {
-        if (!authActionInProgress && !redirectCheckInProgress) {
+        if (!redirectCheckInProgress) {
           irParaHome();
         }
       }, 0);
