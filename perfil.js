@@ -8,7 +8,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 import { auth, db } from "./firebase-config.js";
-import { observarUsuario, renderAuthState, sair } from "./auth.js?v=20260703-google-single-listener";
+import { observarUsuario, renderAuthState, sair } from "./auth.js?v=20260703-google-redirect-only";
 
 const defaultAvatar =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%23040b12'/%3E%3Ccircle cx='80' cy='58' r='30' fill='%2319e6ff' fill-opacity='.9'/%3E%3Cpath d='M30 142c8-31 28-47 50-47s42 16 50 47' fill='%23246dff' fill-opacity='.8'/%3E%3C/svg%3E";

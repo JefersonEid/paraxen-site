@@ -4,7 +4,6 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signInWithPopup,
   signInWithRedirect,
   signOut,
   updateProfile
@@ -115,19 +114,8 @@ export async function entrarComGoogle() {
   bloquearGoogleEmArquivoLocal();
   authActionInProgress = true;
   try {
-    const result = await comTimeout(signInWithPopup(auth, googleProvider));
-    try {
-      await saveUserProfile(result.user, result.user.displayName, Boolean(result._tokenResponse?.isNewUser));
-    } catch (error) {
-      console.warn("Conta autenticada, mas o perfil não foi salvo no Firestore.", error);
-    }
-    irParaHome();
+    await comTimeout(signInWithRedirect(auth, googleProvider));
   } catch (error) {
-    const code = error?.code || "";
-    if (code.includes("popup-blocked") || code.includes("operation-not-supported-in-this-environment")) {
-      await comTimeout(signInWithRedirect(auth, googleProvider));
-      return;
-    }
     authActionInProgress = false;
     throw error;
   }
