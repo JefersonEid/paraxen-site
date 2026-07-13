@@ -6,7 +6,7 @@
   <title>PARÁXEN | App oficial do mangá</title>
   <meta name="description" content="Baixe o app oficial do mangá Paráxen para ler capítulos, conhecer personagens e acompanhar novidades.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=20260630-auth-timeout">
+  <link rel="stylesheet" href="style.css?v=20260713-leitor-capitulos">
 </head>
 <body>
   <header class="site-header">
@@ -15,7 +15,11 @@
         <span class="brand-title">PARÁXEN</span>
         <span class="brand-subtitle">App oficial do mangá</span>
       </a>
-      <nav class="auth-nav" aria-label="Conta">
+      <div class="header-actions">
+        <nav class="main-nav" aria-label="Navegação principal">
+          <a class="nav-link" href="#capitulos">Capítulos</a>
+        </nav>
+        <nav class="auth-nav" aria-label="Conta">
         <div class="auth-nav-group" data-auth-guest>
           <a class="nav-button" href="login.html">Entrar</a>
           <a class="nav-button nav-button-primary" href="cadastro.html">Criar conta</a>
@@ -24,7 +28,8 @@
           <span class="nav-user-name" data-auth-name></span>
           <button class="nav-button" type="button" data-logout>Sair</button>
         </div>
-      </nav>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -69,6 +74,42 @@
         <a class="lore-image-link" href="assets/paraxen-saiba-mais.png" target="_blank" rel="noopener">
           <img class="lore-image" src="assets/paraxen-saiba-mais.png" alt="Informações sobre a obra Paráxen, personagens, mundo, criaturas e poderes.">
         </a>
+      </div>
+    </section>
+
+
+    <section class="section chapters-section" id="capitulos">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2>Capítulos</h2>
+          <p>Escolha um capítulo disponível para começar a leitura.</p>
+        </div>
+        <div class="chapter-list">
+          <a class="chapter-card" href="capitulo-1.html" aria-label="Abrir Capítulo 1">
+            <span class="chapter-number">Capítulo 1</span>
+            <span class="chapter-range">Páginas 0.2 a 19.0</span>
+          </a>
+          <a class="chapter-card" href="capitulo-2.html" aria-label="Abrir Capítulo 2">
+            <span class="chapter-number">Capítulo 2</span>
+            <span class="chapter-range">Páginas 19.1 a 49.1</span>
+          </a>
+          <a class="chapter-card" href="capitulo-3.html" aria-label="Abrir Capítulo 3">
+            <span class="chapter-number">Capítulo 3</span>
+            <span class="chapter-range">Páginas 50 a 80.0</span>
+          </a>
+          <a class="chapter-card" href="capitulo-4.html" aria-label="Abrir Capítulo 4">
+            <span class="chapter-number">Capítulo 4</span>
+            <span class="chapter-range">Páginas 80.1 a 109.1</span>
+          </a>
+          <a class="chapter-card" href="capitulo-5.html" aria-label="Abrir Capítulo 5">
+            <span class="chapter-number">Capítulo 5</span>
+            <span class="chapter-range">Páginas 109.2 a 145.0</span>
+          </a>
+          <a class="chapter-card" href="capitulo-6.html" aria-label="Abrir Capítulo 6">
+            <span class="chapter-number">Capítulo 6</span>
+            <span class="chapter-range">Páginas 145.1 a 176</span>
+          </a>
+        </div>
       </div>
     </section>
 
